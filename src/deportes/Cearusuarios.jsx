@@ -1,33 +1,53 @@
 import axios from 'axios'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-
-
+//import '../../src/style.css';
+//import '../style.css';
+import Swal from 'sweetalert2'
 
 const URI = 'http://localhost:8000/usuarios/reguser'
 
 export const CompCreateUser = () => {
-
+    // const [nombre, setTitle] = useState('')
     const [correo, setContent] = useState('')
     const [nomuser, setUsuario] = useState('')
     const [password, setPass] = useState('')
-    const navigate = useNavigate()
+    const navigate = useNavigate() 
 
     //procedimiento para guardar
     const store = async (e) => {
-        e.preventDefault()
-        await axios.post(URI, {correo:correo, nomuser:nomuser, password:password})
-        navigate('/login')
-    }
+      e.preventDefault()
+      Swal.fire({
+          title: 'Guardar Usuario',
+          text: 'Esta ud seguro de querer guardar los datos del usuario',
+          icon: 'success',
+          showDenyButton: true,
+          denyButtonText: "NO",
+          confirmButtonText: "SI"
+        
+        }).then ( response => {
+          if (response.isConfirmed){
+              axios.post(URI, {correo:correo, nomuser: nomuser, password: password})
+             Swal.fire("Los datos fueron almacenados con exito")
+              navigate('/users')
+          } else {
+             Swal.fire("la información no fue almacenada")
+          }
+ })
+
+}
 
     return(
         <div className="login-form">
             <h3>Creacion de Usuarios</h3>
-            <form onSubmit={store}>
+            <Card>
+                  <Card.Body>
+            
+            <Form onSubmit={store}>
 
-              <div>
+              <div className="login-form">
                 
-              <input
+              <Form.Control
                      value={nomuser}
                      onChange={ (e)=> setUsuario(e.target.value)}
                      type="text"
@@ -37,8 +57,8 @@ export const CompCreateUser = () => {
                     
               </div> 
 
-              <div>
-              <input 
+              <div className="login-form">
+              <Form.Control
                     value={correo}
                     onChange={ (e)=> setContent(e.target.value)}
                     type="email"
@@ -46,20 +66,22 @@ export const CompCreateUser = () => {
                 />
 
               </div>
-              <div>
-              <input 
+              <div className="login-form">
+              <Form.Control
                     value={password}
                     onChange={ (e)=> setPass(e.target.value)}
                     type="password"
-                    className='form-control'
                     placeholder='password'
                 />
 
               </div>
-              <button type='submit' className='btn-register'>Guardar</button>
-            </form>
+              <Button variant="success" type="submit" className="btn-register">Guardar</Button>
+
+              </Form>
+             </Card.Body>
+            </Card>
         </div>
     )
-}
+} 
 
 export default CompCreateUser
